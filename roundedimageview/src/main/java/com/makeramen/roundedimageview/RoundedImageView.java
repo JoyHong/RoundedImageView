@@ -225,7 +225,7 @@ public class RoundedImageView extends ImageView {
   @Override
   public void setImageDrawable(Drawable drawable) {
     mResource = 0;
-    mDrawable = RoundedDrawable.fromDrawable(drawable);
+    mDrawable = tryToRoundDrawable(drawable);
     updateDrawableAttrs();
     super.setImageDrawable(mDrawable);
   }
@@ -268,7 +268,7 @@ public class RoundedImageView extends ImageView {
         mResource = 0;
       }
     }
-    return RoundedDrawable.fromDrawable(d);
+    return tryToRoundDrawable(d);
   }
 
   @Override
@@ -306,7 +306,7 @@ public class RoundedImageView extends ImageView {
         mBackgroundResource = 0;
       }
     }
-    return RoundedDrawable.fromDrawable(d);
+    return tryToRoundDrawable(d);
   }
 
   private void updateDrawableAttrs() {
@@ -316,7 +316,7 @@ public class RoundedImageView extends ImageView {
   private void updateBackgroundDrawableAttrs(boolean convert) {
     if (mMutateBackground) {
       if (convert) {
-        mBackgroundDrawable = RoundedDrawable.fromDrawable(mBackgroundDrawable);
+        mBackgroundDrawable = tryToRoundDrawable(mBackgroundDrawable);
       }
       updateAttrs(mBackgroundDrawable, ScaleType.FIT_XY);
     }
@@ -601,4 +601,22 @@ public class RoundedImageView extends ImageView {
     updateBackgroundDrawableAttrs(true);
     invalidate();
   }
+
+  private Drawable tryToRoundDrawable(Drawable drawable) {
+    if (drawableInterceptor != null && drawableInterceptor.onInterceptDrawable(drawable)) {
+      return drawable;
+    }
+    return RoundedDrawable.fromDrawable(drawable);
+  }
+
+  interface DrawableInterceptor {
+    boolean onInterceptDrawable(Drawable drawable);
+  }
+
+  private DrawableInterceptor drawableInterceptor;
+
+  public void setDrawableInterceptor(DrawableInterceptor drawableInterceptor) {
+    this.drawableInterceptor = drawableInterceptor;
+  }
+
 }
