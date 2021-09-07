@@ -609,7 +609,7 @@ public class RoundedImageView extends ImageView {
     return RoundedDrawable.fromDrawable(drawable);
   }
 
-  interface DrawableInterceptor {
+  public interface DrawableInterceptor {
     boolean onInterceptDrawable(Drawable drawable);
   }
 
